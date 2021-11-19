@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 jupyter = "*"
+pandas = "*"
+tensorflow = "*"
+gensim = "*"
 
 [dev-packages]
 
