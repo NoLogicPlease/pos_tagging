@@ -59,31 +59,30 @@ training_info = {
                                                 patience=10)]
 }
 
+model_params = {
+    'compile_info': compile_info,
+    'value_to_key': v3_val_to_key,
+    'embedding_dim': EMBEDDING_SIZE,
+    'max_seq_len': max_seq_len,
+    'num_labels': num_classes,
+    'embedding_matrix': v3_matrix
+}
+
 # BASELINE
-'''baseline = Model.create_LSTM(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
-                             num_labels=num_classes, embedding_matrix=v3_matrix)
+baseline_class = Model('baseline', **model_params)
+baseline_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val, training_info=training_info)
 
-baseline = Model.train_model(model=baseline, x_train=x_train, y_train=y_train,
-                             x_val=x_val, y_val=y_val, training_info=training_info)'''
-
+'''
 # GRU
-
-gru_model = Model.create_GRU(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
-                             num_labels=num_classes, embedding_matrix=v3_matrix)
-
-gru_train_model = Model.train_model(model=gru_model, x_train=x_train, y_train=y_train,
-                                    x_val=x_val, y_val=y_val, training_info=training_info)
+gru_class = Model('gru', **model_params)
+gru_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val, training_info=training_info)
 
 # TWO LSTM
-'''twolstm_model = Model.create_two_LSTM(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
-                                      num_labels=num_classes, embedding_matrix=v3_matrix)
-                                      
-twolstm_train_model = Model.train_model(model=twolstm_model, x_train=x_train, y_train=y_train,
-        x_val=x_val, y_val=y_val, training_info=training_info)
+twolstm_class = Model('two_lstm', **model_params)
+twolstm_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val, training_info=training_info)
+
 
 # TWO DENSE
-twodense_model = Model.create_two_Dense(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
-                                        num_labels=num_classes, embedding_matrix=v3_matrix)
-
-twodense_train_model = Model.train_model(model=twodense_model, x_train=x_train, y_train=y_train,
-                                    x_val=x_val, y_val=y_val, training_info=training_info)'''
+twodense_class = Model('two_dense', **model_params)
+twodense_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val, training_info=training_info)
+'''

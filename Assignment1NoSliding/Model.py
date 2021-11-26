@@ -7,15 +7,31 @@ import numpy as np
 
 
 class Model(object):
-    def __init__(self, model_type='gru'):
-        self.model_type = model_type
+    def __init__(self, model_type, compile_info, value_to_key, embedding_dim, max_seq_len, num_labels,
+                 embedding_matrix):
 
-    def create_LSTM(self, compile_info: dict, value_to_key, embedding_dim,
-                    max_seq_len, num_labels, embedding_matrix) -> keras.Model:
+        self.compile_info = compile_info
+        self.value_to_key = value_to_key
+        self.embedding_dim = embedding_dim
+        self.max_seq_len = max_seq_len
+        self.num_labels = num_labels
+        self.embedding_matrix = embedding_matrix
+
+        if 'baseline' == model_type:
+            self.model = self.create_LSTM()
+        elif 'gru' == model_type:
+            self.model = self.create_GRU()
+        elif 'two_lstm' == model_type:
+            self.model = self.create_two_LSTM()
+        else:
+            self.model = self.create_two_Dense()
+
+    def create_LSTM(self) -> keras.Model:
+
         bidirect_model = keras.models.Sequential()
-        bidirect_model.add(layers.Embedding(input_dim=len(value_to_key.keys()),
-                                            output_dim=embedding_dim,
-                                            input_length=max_seq_len,
+        bidirect_model.add(layers.Embedding(input_dim=len(self.value_to_key.keys()),
+                                            output_dim=self.embedding_dim,
+                                            input_length=self.max_seq_len,
                                             mask_zero=True,
                                             weights=[embedding_matrix],
                                             trainable=False
@@ -55,7 +71,7 @@ class Model(object):
                                   trainable=False
                                   ))
 
-        lstm.add(layers.Bidirectional(layers.LSTM(250, return_sequences=False)))
+        lstm.add(layers.Bidirectional(layers.LSTM(250, return_sequences=True)))
         lstm.add(layers.LSTM(64, return_sequences=True))
         lstm.add(layers.TimeDistributed(layers.Dense(num_labels, activation="softmax")))
         lstm.compile(**compile_info)
@@ -101,7 +117,7 @@ class Model(object):
 
         plt.show()
 
-    def train_model(self, model: keras.Model,
+    def train_model(self,
                     x_train: np.ndarray,
                     y_train: np.ndarray,
                     x_val: np.ndarray,
@@ -109,21 +125,19 @@ class Model(object):
                     training_info: dict):
 
         print("Start training! \nParameters: {}".format(training_info))
-        history = model.fit(x=x_train, y=y_train,
-                            validation_data=(x_val, y_val),
-                            **training_info)
+        history = self.model.fit(x=x_train, y=y_train,
+                                 validation_data=(x_val, y_val),
+                                 **training_info)
         print("Training completed! Showing history...")
 
         self.show_history(history)
 
-        return model
-
-    def predict_data(self, model: keras.Model,
+    def predict_data(self,
                      x: np.ndarray,
                      prediction_info: dict) -> np.ndarray:
 
         print('Starting prediction: \n{}'.format(prediction_info))
         print('Predicting on {} samples'.format(x.shape[0]))
 
-        predictions = model.predict(x, **prediction_info)
+        predictions = self.model.predict(x, **prediction_info)
         return predictions
