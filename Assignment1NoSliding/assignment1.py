@@ -14,7 +14,7 @@ import tensorflow as tf
 import gensim
 import gensim.downloader as gloader
 from tensorflow import keras
-from Model import create_model, train_model, predict_data
+from Model import Model
 
 WINDOW_LENGTH = 5
 EMBEDDING_SIZE = 50
