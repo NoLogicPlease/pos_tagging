@@ -12,6 +12,7 @@ from urllib import request
 import collections
 import tensorflow as tf
 import gensim
+from sklearn.metrics import f1_score
 import gensim.downloader as gloader
 from tensorflow import keras
 from Model import Model
@@ -44,6 +45,7 @@ num_classes = get_num_classes(df[df['split'] == 'train'])
 x_train, y_train, tok = create_trainable(df[df['split'] == 'train'], v3_val_to_key, max_seq_len,
                                          num_classes=num_classes)
 x_val, y_val, tok = create_trainable(df[df['split'] == 'val'], v3_val_to_key, max_seq_len, num_classes=num_classes)
+x_test, y_test, tok = create_trainable(df[df['split'] == 'test'], v4_val_to_key, max_seq_len, num_classes=num_classes)
 
 compile_info = {
     'optimizer': keras.optimizers.Adam(learning_rate=1e-3),
@@ -53,7 +55,7 @@ compile_info = {
 
 training_info = {
     'verbose': 1,
-    'epochs': 10,
+    'epochs': 1,
     'batch_size': 64,
     'callbacks': [keras.callbacks.EarlyStopping(monitor='val_loss',
                                                 patience=10)]
@@ -67,6 +69,7 @@ model_params = {
     'num_labels': num_classes,
     'embedding_matrix': v3_matrix
 }
+
 
 # BASELINE
 baseline_class = Model('baseline', **model_params)
@@ -86,3 +89,8 @@ twolstm_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y
 twodense_class = Model('two_dense', **model_params)
 twodense_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val, training_info=training_info)
 '''
+
+baseline_class.embedding_matrix = v4_matrix
+baseline_class.value_to_key = v4_val_to_key
+y_pred = baseline_class.predict_data(x_test, prediction_info=prediction_info)
+f1_score = f1_score(y_test, y_pred, average='macro')
