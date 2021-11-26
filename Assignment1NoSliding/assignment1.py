@@ -6,7 +6,7 @@ import zipfile
 import numpy as np
 import pandas as pd
 from Tokenizer import Tokenizer
-from dataset_tools import create_dataset, create_trainable
+from dataset_tools import create_dataset, create_trainable, get_num_classes
 from tqdm import tqdm
 from urllib import request
 import collections
