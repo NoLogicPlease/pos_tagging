@@ -104,4 +104,3 @@ def predict_data(model: keras.Model,
     return predictions
 
 
-
