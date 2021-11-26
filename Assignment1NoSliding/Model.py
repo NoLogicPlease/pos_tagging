@@ -33,66 +33,63 @@ class Model(object):
                                             output_dim=self.embedding_dim,
                                             input_length=self.max_seq_len,
                                             mask_zero=True,
-                                            weights=[embedding_matrix],
+                                            weights=[self.embedding_matrix],
                                             trainable=False
                                             ))
         bidirect_model.add(layers.Bidirectional(layers.LSTM(250, return_sequences=True)))
-        bidirect_model.add(layers.TimeDistributed(layers.Dense(num_labels, activation="softmax")))
+        bidirect_model.add(layers.TimeDistributed(layers.Dense(self.num_labels, activation="softmax")))
 
-        bidirect_model.compile(**compile_info)
+        bidirect_model.compile(**self.compile_info)
         bidirect_model.summary()
         return bidirect_model
 
-    def create_GRU(self, compile_info: dict, value_to_key, embedding_dim,
-                   max_seq_len, num_labels, embedding_matrix) -> keras.Model:
+    def create_GRU(self) -> keras.Model:
         gru = keras.models.Sequential()
-        gru.add(layers.Embedding(input_dim=len(value_to_key.keys()),
-                                 output_dim=embedding_dim,
-                                 input_length=max_seq_len,
+        gru.add(layers.Embedding(input_dim=len(self.value_to_key.keys()),
+                                 output_dim=self.embedding_dim,
+                                 input_length=self.max_seq_len,
                                  mask_zero=True,
-                                 weights=[embedding_matrix],
+                                 weights=[self.embedding_matrix],
                                  trainable=False
                                  ))
 
         gru.add(layers.GRU(64, return_sequences=True))
-        gru.add(layers.TimeDistributed(layers.Dense(num_labels, activation="softmax")))
-        gru.compile(**compile_info)
+        gru.add(layers.TimeDistributed(layers.Dense(self.num_labels, activation="softmax")))
+        gru.compile(**self.compile_info)
         gru.summary()
         return gru
 
-    def create_two_LSTM(self, compile_info: dict, value_to_key, embedding_dim,
-                        max_seq_len, num_labels, embedding_matrix) -> keras.Model:
+    def create_two_LSTM(self) -> keras.Model:
         lstm = keras.models.Sequential()
-        lstm.add(layers.Embedding(input_dim=len(value_to_key.keys()),
-                                  output_dim=embedding_dim,
-                                  input_length=max_seq_len,
+        lstm.add(layers.Embedding(input_dim=len(self.value_to_key.keys()),
+                                  output_dim=self.embedding_dim,
+                                  input_length=self.max_seq_len,
                                   mask_zero=True,
-                                  weights=[embedding_matrix],
+                                  weights=[self.embedding_matrix],
                                   trainable=False
                                   ))
 
         lstm.add(layers.Bidirectional(layers.LSTM(250, return_sequences=True)))
         lstm.add(layers.LSTM(64, return_sequences=True))
-        lstm.add(layers.TimeDistributed(layers.Dense(num_labels, activation="softmax")))
-        lstm.compile(**compile_info)
+        lstm.add(layers.TimeDistributed(layers.Dense(self.num_labels, activation="softmax")))
+        lstm.compile(**self.compile_info)
         lstm.summary()
         return lstm
 
-    def create_two_Dense(self, compile_info: dict, value_to_key, embedding_dim,
-                         max_seq_len, num_labels, embedding_matrix) -> keras.Model:
+    def create_two_Dense(self) -> keras.Model:
         lstm = keras.models.Sequential()
-        lstm.add(layers.Embedding(input_dim=len(value_to_key.keys()),
-                                  output_dim=embedding_dim,
-                                  input_length=max_seq_len,
+        lstm.add(layers.Embedding(input_dim=len(self.value_to_key.keys()),
+                                  output_dim=self.embedding_dim,
+                                  input_length=self.max_seq_len,
                                   mask_zero=True,
-                                  weights=[embedding_matrix],
+                                  weights=[self.embedding_matrix],
                                   trainable=False
                                   ))
 
         lstm.add(layers.Bidirectional(layers.LSTM(250, return_sequences=True)))
         lstm.add(layers.TimeDistributed(layers.Dense(128, activation="relu")))
-        lstm.add(layers.TimeDistributed(layers.Dense(num_labels, activation="softmax")))
-        lstm.compile(**compile_info)
+        lstm.add(layers.TimeDistributed(layers.Dense(self.num_labels, activation="softmax")))
+        lstm.compile(**self.compile_info)
         lstm.summary()
         return lstm
 
