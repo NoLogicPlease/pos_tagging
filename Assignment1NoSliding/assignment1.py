@@ -41,7 +41,8 @@ v4_matrix = tokenizer.build_embedding_matrix()
 v4_val_to_key = tokenizer.get_val_to_key()
 
 num_classes = get_num_classes(df[df['split'] == 'train'])
-x_train, y_train, tok = create_trainable(df[df['split'] == 'train'], v3_val_to_key, max_seq_len, num_classes=num_classes)
+x_train, y_train, tok = create_trainable(df[df['split'] == 'train'], v3_val_to_key, max_seq_len,
+                                         num_classes=num_classes)
 x_val, y_val, tok = create_trainable(df[df['split'] == 'val'], v3_val_to_key, max_seq_len, num_classes=num_classes)
 
 compile_info = {
@@ -57,8 +58,32 @@ training_info = {
     'callbacks': [keras.callbacks.EarlyStopping(monitor='val_loss',
                                                 patience=10)]
 }
-bidirect_model = create_model(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
-                              num_labels=46, embedding_matrix=v3_matrix)
 
-model = train_model(model=bidirect_model, x_train=x_train, y_train=y_train,
-                    x_val=x_val, y_val=y_val, training_info=training_info)
+# BASELINE
+'''baseline = Model.create_LSTM(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
+                             num_labels=num_classes, embedding_matrix=v3_matrix)
+
+baseline = Model.train_model(model=baseline, x_train=x_train, y_train=y_train,
+                             x_val=x_val, y_val=y_val, training_info=training_info)'''
+
+# GRU
+
+gru_model = Model.create_GRU(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
+                             num_labels=num_classes, embedding_matrix=v3_matrix)
+
+gru_train_model = Model.train_model(model=gru_model, x_train=x_train, y_train=y_train,
+                                    x_val=x_val, y_val=y_val, training_info=training_info)
+
+# TWO LSTM
+'''twolstm_model = Model.create_two_LSTM(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
+                                      num_labels=num_classes, embedding_matrix=v3_matrix)
+                                      
+twolstm_train_model = Model.train_model(model=twolstm_model, x_train=x_train, y_train=y_train,
+        x_val=x_val, y_val=y_val, training_info=training_info)
+
+# TWO DENSE
+twodense_model = Model.create_two_Dense(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
+                                        num_labels=num_classes, embedding_matrix=v3_matrix)
+
+twodense_train_model = Model.train_model(model=twodense_model, x_train=x_train, y_train=y_train,
+                                    x_val=x_val, y_val=y_val, training_info=training_info)'''
