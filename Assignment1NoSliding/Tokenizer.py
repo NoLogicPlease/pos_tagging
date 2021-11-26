@@ -17,6 +17,9 @@ class Tokenizer(object):
         self.glove_matrix = glove_matrix
         self.unique_words = set()
 
+    def get_val_to_key(self):
+        return copy.deepcopy(self.value_to_key)
+
     def tokenize(self):
         self.value_to_key_new = {}
         unique_words = set()

@@ -14,10 +14,10 @@ def create_model(compile_info: dict, value_to_key, embedding_dim,
                                         output_dim=embedding_dim,
                                         input_length=max_seq_len,
                                         mask_zero=True,
-                                        weights=embedding_matrix,
+                                        weights=[embedding_matrix],
                                         trainable=False
                                         ))
-    bidirect_model.add(layers.Bidirectional(layers.LSTM(64, return_sequences=True)))
+    bidirect_model.add(layers.Bidirectional(layers.LSTM(250, return_sequences=True)))
     bidirect_model.add(layers.TimeDistributed(layers.Dense(num_labels, activation="softmax")))
 
     bidirect_model.compile(**compile_info)

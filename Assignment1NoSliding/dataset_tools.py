@@ -1,6 +1,8 @@
 import re
 import os
 import zipfile
+
+import numpy as np
 import pandas as pd
 from urllib import request
 from tqdm import tqdm
@@ -85,24 +87,28 @@ def create_dataset():
     return df, max_seq_len
 
 
-def create_trainable(dataset, value_to_key, max_seq_len):
+def create_trainable(dataset, value_to_key, max_seq_len, num_classes):
     text_ids = [[value_to_key[word] for word in sen.split()] for sen in dataset['text']]
     x_train = []
     y_train = []
-    label_tokenizer = TwoWay()
+    label_tokenizer = {}
 
-    label_id = 1
-    for sen in dataset["POStagging"]:
-        for label in sen.split():
-            try:
-                check_label = label_tokenizer.d[label]
-            except KeyError:
-                label_tokenizer.add(label_id, label)
-                label_id += 1
-
+    one_hot_idx = 0
     for sen, tagging in zip(text_ids, dataset["POStagging"]):
         tmp = [0] * (max_seq_len - len(sen)) + sen
         x_train.append(tmp)
-        tmp = [0] * (max_seq_len - len(sen)) + [label_tokenizer.get(e) for e in tagging.split()]
+
+        for label in tagging.split():
+            try:
+                check_label = label_tokenizer[label]
+            except KeyError:
+                label_tokenizer[label] = [1 if i == one_hot_idx else 0 for i in range(num_classes)]
+                one_hot_idx += 1
+
+        tmp = [[0] * num_classes] * (max_seq_len - len(sen)) + [label_tokenizer[e] for e in tagging.split()]
         y_train.append(tmp)
-    return x_train, y_train, label_tokenizer
+    return np.array(x_train), np.array(y_train), label_tokenizer
+
+
+def get_num_classes(dataset):
+    return len(np.unique(''.join(dataset["POStagging"]).split())) + 1  # +1 for the padding

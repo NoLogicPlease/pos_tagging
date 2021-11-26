@@ -27,21 +27,22 @@ glove_matrix = emb_model.vectors
 
 tokenizer = Tokenizer(df[df['split'] == 'train']['text'], EMBEDDING_SIZE, glove_dict, glove_matrix)
 tokenizer.tokenize()
-v2_val_to_key = tokenizer.value_to_key
+v2_val_to_key = tokenizer.get_val_to_key()
 v2_matrix = tokenizer.build_embedding_matrix()
 
 tokenizer.dataset_sentences = df[df['split'] == 'val']['text']
 tokenizer.tokenize()
 v3_matrix = tokenizer.build_embedding_matrix()
-v3_val_to_key = tokenizer.value_to_key
+v3_val_to_key = tokenizer.get_val_to_key()
 
 tokenizer.dataset_sentences = df[df['split'] == 'test']['text']
 tokenizer.tokenize()
 v4_matrix = tokenizer.build_embedding_matrix()
-v4_val_to_key = tokenizer.value_to_key
+v4_val_to_key = tokenizer.get_val_to_key()
 
-x_train, y_train, tok = create_trainable(df[df['split'] == 'train'], v2_val_to_key, max_seq_len)
-x_val, y_val, tok = create_trainable(df[df['split'] == 'val'], v3_val_to_key, max_seq_len)
+num_classes = get_num_classes(df[df['split'] == 'train'])
+x_train, y_train, tok = create_trainable(df[df['split'] == 'train'], v3_val_to_key, max_seq_len, num_classes=num_classes)
+x_val, y_val, tok = create_trainable(df[df['split'] == 'val'], v3_val_to_key, max_seq_len, num_classes=num_classes)
 
 compile_info = {
     'optimizer': keras.optimizers.Adam(learning_rate=1e-3),
@@ -56,9 +57,8 @@ training_info = {
     'callbacks': [keras.callbacks.EarlyStopping(monitor='val_loss',
                                                 patience=10)]
 }
-
 bidirect_model = create_model(compile_info, v3_val_to_key, EMBEDDING_SIZE, max_seq_len,
-                              num_labels=len(np.unique(y_train)), embedding_matrix=v3_matrix)
+                              num_labels=46, embedding_matrix=v3_matrix)
 
 model = train_model(model=bidirect_model, x_train=x_train, y_train=y_train,
                     x_val=x_val, y_val=y_val, training_info=training_info)
