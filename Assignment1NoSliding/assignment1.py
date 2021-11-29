@@ -55,7 +55,7 @@ compile_info = {
 
 training_info = {
     'verbose': 1,
-    'epochs': 1,
+    'epochs': 50,
     'batch_size': 64,
     'callbacks': [keras.callbacks.EarlyStopping(monitor='val_loss',
                                                 patience=10)]
@@ -63,7 +63,7 @@ training_info = {
 
 model_params = {
     'compile_info': compile_info,
-    'value_to_key': v3_val_to_key,
+    'value_to_key': v4_val_to_key,
     'embedding_dim': EMBEDDING_SIZE,
     'max_seq_len': max_seq_len,
     'num_labels': num_classes,
@@ -90,7 +90,16 @@ twodense_class = Model('two_dense', **model_params)
 twodense_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=y_val, training_info=training_info)
 '''
 
-baseline_class.embedding_matrix = v4_matrix
-baseline_class.value_to_key = v4_val_to_key
+# baseline_class.embedding_matrix = v4_matrix
+# baseline_class.value_to_key = v4_val_to_key
+
+
+# model.layers[idx_of_your_embedding_layer].set_weights(my_new_embedding_matrix)
+
+baseline_class.model.layers[0].set_weights([v4_matrix])
+
 y_pred = baseline_class.predict_data(x_test, prediction_info=prediction_info)
-f1_score = f1_score(y_test, y_pred, average='macro')
+y_pred = [np.argmax(el) for el in y_pred]  # from one hot to label index
+y_true = [np.argmax(el) for el in y_test]
+f1_score = f1_score(y_true, y_pred, average='macro')
+print(f1_score)
