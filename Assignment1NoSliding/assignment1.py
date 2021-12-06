@@ -67,7 +67,7 @@ model_params = {
     'embedding_dim': EMBEDDING_SIZE,
     'max_seq_len': max_seq_len,
     'num_labels': num_classes,
-    'embedding_matrix': v3_matrix
+    'embedding_matrix': v4_matrix
 }
 
 
