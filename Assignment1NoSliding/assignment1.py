@@ -96,7 +96,7 @@ twodense_class.train_model(x_train=x_train, y_train=y_train, x_val=x_val, y_val=
 
 # model.layers[idx_of_your_embedding_layer].set_weights(my_new_embedding_matrix)
 
-baseline_class.model.layers[0].set_weights([v4_matrix])
+#baseline_class.model.layers[0].set_weights([v4_matrix])
 
 y_pred = baseline_class.predict_data(x_test, prediction_info=prediction_info)
 y_pred = [np.argmax(el) for el in y_pred]  # from one hot to label index

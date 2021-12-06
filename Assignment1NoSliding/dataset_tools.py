@@ -36,8 +36,9 @@ def encode_dataset(dataset_path: str, dataset_folder: str, debug: bool = True) -
             lines = f.readlines()
         full_file = ''.join(lines)  # since lines is a list we use a single string called full_file
 
+        #LRB RRB COPY FROM ASSIGNMENT 2
         #######  deletes all puntuation #
-        full_file = re.sub(r'[^\w\s]', r'\.', full_file) #replace all puntuaction with period
+        #full_file = re.sub(r'[^\w\s]', r'\.', full_file) #replace all puntuaction with period
         ############################################
 
         full_file = re.sub(r'(\t\d+)', '', full_file)  # remove numbers from each lines of dataset
