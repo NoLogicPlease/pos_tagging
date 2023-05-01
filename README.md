@@ -1,2 +1,2 @@
 # Assignment1
-POS Tagging
+pos-tagging
